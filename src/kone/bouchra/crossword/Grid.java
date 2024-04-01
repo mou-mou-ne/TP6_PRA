@@ -1,6 +1,6 @@
 package kone.bouchra.crossword;
 
-public class Grid {
+public class Grid<T> {
 	/**
 	 * Constructeur permettant d'obtenir une grille dotée d'un tableau
 	 * de dimensions conformes aux valeurs respectives de height et
@@ -10,7 +10,7 @@ public class Grid {
 	
 	private int height;
 	private int width;
-	private String [][] array ;
+	private T [][] array ;
 	
 	
 	public Grid (int height, int width){
@@ -21,7 +21,8 @@ public class Grid {
 		else {
 			this.height= height;
 			this.width=width;
-			this.array = new String [height][width];
+//			this.array = new String [height][width];
+			this.array = (T[][]) new Object[this.height][this.width];
 		}
 		
 		
@@ -70,18 +71,18 @@ public class Grid {
 	 * @pre correctCoords(row,colum)
 	 * @throws IOException
 	 */
-	public String getCell(int row, int column) {
+	public T getCell(int row, int column) {
 		
 		if (!correctCoords(row, column)) {
 			 throw new IllegalArgumentException("Les coordonées ne sont pas valides");    
 		}
 		
-		return array[row][column];
+		return this.array[row][column];
 	}
 	
 	
 	
-	public void setCell (int row, int column, String ch){
+	public void setCell (int row, int column, T ch){
 		
 		if (!correctCoords(row, column)) {
 			 throw new IllegalArgumentException("Les coordonées ne sont pas valide");    

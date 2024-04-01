@@ -9,7 +9,16 @@ public class CrosswordSquare {
     private boolean statut;
     
     
-    public char getSolution(){
+    public CrosswordSquare(char solution, char proposition, String horizontal, String vertical, boolean statut) {
+        this.solution = solution;
+        this.proposition = proposition;
+        this.horizontal = horizontal;
+        this.vertical = vertical;
+        this.statut = statut;
+    }
+   // TODO Auto-generated constructor stub
+	
+	public char getSolution(){
 
         return solution;
     }

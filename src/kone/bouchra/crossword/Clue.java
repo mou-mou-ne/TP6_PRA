@@ -33,7 +33,8 @@ public class Clue {
 		 
 	 }
 	
-	 @Override public String toString() {
+	 @Override 
+	 public String toString() {
 		 
 		 return "Clue{" +
 	                "clue='" + clue + '\'' +

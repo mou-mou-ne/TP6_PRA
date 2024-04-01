@@ -3,10 +3,10 @@ package kone.bouchra.crossword;
 import java.sql.*;
 import java.util.*;
 
-public class ChargeGrid {
+public class Database {
     private Connection connexion;
 
-    public ChargeGrid() {
+    public Database() {
         try {
             connexion = connecterBD();
         } catch (SQLException e) {
@@ -74,7 +74,7 @@ public class ChargeGrid {
     }
 
     public static void main(String[] args) {
-        ChargeGrid cg = new ChargeGrid();
+        Database cg = new Database();
         Map<Integer, String> m = cg.availableGrids();
         System.out.println(m);
         Scanner sc = new Scanner(System.in);

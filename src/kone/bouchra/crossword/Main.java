@@ -1,4 +1,4 @@
-package application;
+package kone.bouchra.crossword;
 	
 import javafx.application.Application;
 import javafx.stage.Stage;

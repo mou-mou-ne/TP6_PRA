@@ -1,5 +1,7 @@
 package kone.bouchra.crossword;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -64,35 +66,48 @@ public class Crossword extends Grid<CrosswordSquare> {
         return horizontalClues;
     }
 
-    public static Crossword createPuzzle(Database database, int puzzleNumber) throws SQLException {
+    public static Crossword createPuzzle(Database database, int puzzleNumber) {
         Crossword crossword = null;
-        String query = "SELECT * FROM grid WHERE numero_grille = " + puzzleNumber;
-        try (Statement stmt = database.connecterBD().createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-            if (rs.next()) {
-                int height = rs.getInt("hauteur");
-                int width = rs.getInt("largeur");
-                crossword = new Crossword(height, width);
+        String queryGrid = "SELECT hauteur, largeur FROM grid WHERE numero_grille = ?";
+        String queryCrossword = "SELECT definition, horizontal, ligne, colonne, solution FROM crossword WHERE numero_grille = ?";
 
-                try (ResultSet rs2 = stmt.executeQuery("SELECT * FROM crossword WHERE numero_grille = " + puzzleNumber)) {
-                    while (rs2.next()) {
-                        String definition = rs2.getString("definition");
-                        boolean horizontal = rs2.getBoolean("horizontal");
-                        int row = rs2.getInt("ligne");
-                        int col = rs2.getInt("colonne");
-                        String solution = rs2.getString("solution");
-                        crossword.setDefinition(row, col, horizontal, definition);
-                        for (int i = 0; i < solution.length(); i++) {
-                            if (horizontal) {
-                                crossword.setSolution(row, col + i, solution.toUpperCase().charAt(i));
-                            } else {
-                                crossword.setSolution(row + i, col, solution.toUpperCase().charAt(i));
+        try (Connection conn = database.connecterBD();
+             PreparedStatement stmtGrid = conn.prepareStatement(queryGrid);
+             PreparedStatement stmtCrossword = conn.prepareStatement(queryCrossword)) {
+
+            stmtGrid.setInt(1, puzzleNumber);
+            try (ResultSet rsGrid = stmtGrid.executeQuery()) {
+                if (rsGrid.next()) {
+                    int height = rsGrid.getInt("hauteur");
+                    int width = rsGrid.getInt("largeur");
+                    crossword = new Crossword(height, width);
+
+                    stmtCrossword.setInt(1, puzzleNumber);
+                    try (ResultSet rsCrossword = stmtCrossword.executeQuery()) {
+                        while (rsCrossword.next()) {
+                            String definition = rsCrossword.getString("definition");
+                            boolean horizontal = rsCrossword.getBoolean("horizontal");
+                            int row = rsCrossword.getInt("ligne");
+                            int col = rsCrossword.getInt("colonne");
+                            String solution = rsCrossword.getString("solution");
+                            crossword.setDefinition(row, col, horizontal, definition);
+                            for (int i = 0; i < solution.length(); i++) {
+                                if (horizontal) {
+                                    crossword.setSolution(row, col + i, solution.toUpperCase().charAt(i));
+                                } else {
+                                    crossword.setSolution(row + i, col, solution.toUpperCase().charAt(i));
+                                }
                             }
                         }
                     }
                 }
             }
+        } catch (SQLException e) {
+            // Gestion des exceptions SQL
+            e.printStackTrace();
+            // Vous pouvez choisir de propager l'exception ou de la gérer ici
         }
+
         return crossword;
     }
 

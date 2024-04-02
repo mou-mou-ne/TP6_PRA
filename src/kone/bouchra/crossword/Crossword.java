@@ -98,14 +98,27 @@ public class Crossword extends Grid<CrosswordSquare> {
 
    
 
-	public void printProposition() {
-      
+    public void printProposition() {
+        for (int row = 0; row < getHeight(); row++) {
+            for (int column = 0; column < getWidth(); column++) {
+                char proposition = getProposition(row, column);
+                System.out.print(proposition + " ");
+            }
+            System.out.println();
+        }
     }
 
+
     public void printSolution() {
-       
+        for (int row = 0; row < getHeight(); row++) {
+            for (int column = 0; column < getWidth(); column++) {
+                char solution = getSolution(row, column);
+                System.out.print(solution + " ");
+            }
+            System.out.println();
+        }
     }
-    
+
   
  
     public boolean correctCoords(int row, int column) {

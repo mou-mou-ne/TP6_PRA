@@ -6,9 +6,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="#">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kone.bouchra.crossword.MenuController">
    <children>
-      <ChoiceBox fx:id="gridList" layoutX="173.0" layoutY="149.0" prefHeight="25.0" prefWidth="237.0" />
+      <ChoiceBox fx:id="listeGrille" layoutX="173.0" layoutY="149.0" prefHeight="25.0" prefWidth="237.0" />
       <Label layoutX="208.0" layoutY="48.0" prefHeight="29.0" prefWidth="185.0" text="CROSSWORD" textAlignment="CENTER">
          <font>
             <Font size="24.0" />
@@ -16,7 +16,6 @@
       </Label>
      
       <Button fx:id="play" layoutX="255.0" layoutY="237.0" mnemonicParsing="false" onAction="#play" text="Jouer" />
-       <Button fx:id="random" layoutX="258.0" layoutY="260.0" mnemonicParsing="false" onAction="#selectRandomGrid" text="Grille aléatoire" />
-   
+            <Button fx:id="play" layoutX="255.0" layoutY="237.0" mnemonicParsing="false" onAction="#play" text="Effacer" />
    </children>
 </AnchorPane>

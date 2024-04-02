@@ -9,7 +9,7 @@ import javafx.scene.layout.BorderPane;
 
 
 public class Main extends Application {
-	  public static int choice;
+	  public static int choix;
 
 	@Override
 	public void start(Stage stage) throws Exception {

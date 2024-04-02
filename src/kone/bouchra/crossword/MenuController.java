@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -21,39 +22,36 @@ import java.util.ResourceBundle;
 public class MenuController implements Initializable {
 
     @FXML
-    private ChoiceBox<String> gridList;
+    private ChoiceBox<String> listeGrille;
 
     @FXML
     private Button play;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Database chargeGrid = new Database();
-        try {
-            Map<Integer, String> grids = chargeGrid.availableGrids();
-            ObservableList<String> availableGrids = FXCollections.observableArrayList(grids.values());
-            gridList.getItems().addAll(availableGrids);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        Database db = new Database();
+        Map<Integer, String> grids = db.availableGrids();
+        ObservableList<String> availableGrids = FXCollections.observableArrayList(grids.values());
+		listeGrille.getItems().addAll(availableGrids);
     }
 
     public void play(ActionEvent e) {
-                Main.choice = gridList.getSelectionModel().getSelectedIndex();
-                System.out.println(Main.choice);
-                playGame(e,"grid.fxml");
+    	Main.choix = listeGrille.getSelectionModel().getSelectedIndex();
+        System.out.println("Selected grid index: " + listeGrille.getSelectionModel().getSelectedIndex());
+        playGame(e, "grid.fxml");
     }
 
     public void playGame(ActionEvent e, String urlFXML) {
         try {
-            FXMLLoader loader = new FXMLLoader(MenuController.class.getResource(urlFXML));
-            Parent root = (Parent) loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(urlFXML));
+            Parent root = loader.load();
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
             stage.setScene(scene);
             stage.show();
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            
+            System.err.println("Error loading scene: " + ex.getMessage());
         }
     }
 }

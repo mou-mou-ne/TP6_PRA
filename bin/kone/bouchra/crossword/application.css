@@ -1,1 +1,11 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+/* styles.css */
+.current-cell {
+    -fx-border-color: blue;
+    -fx-border-width: 2;
+}
+
+.selected-clue {
+    -fx-text-fill: red;
+}

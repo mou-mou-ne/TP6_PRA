@@ -99,13 +99,20 @@ public class Crossword extends Grid<CrosswordSquare> {
                                 }
                             }
                         }
+                        for (int i = 1; i <= crossword.getHeight(); i++) {
+                            for (int j = 1; j <= crossword.getWidth(); j++) {
+                                if(crossword.getCell(i, j).getSolution() == ' '){
+                                    crossword.setBlackSquare(i, j, true);
+                                    System.out.println(crossword.getCell(i, j).getSolution());
+                                }
+
+                            }
+                        }
                     }
                 }
             }
         } catch (SQLException e) {
-            // Gestion des exceptions SQL
-            e.printStackTrace();
-            // Vous pouvez choisir de propager l'exception ou de la gérer ici
+            e.printStackTrace();  
         }
 
         return crossword;
@@ -151,6 +158,8 @@ public class Crossword extends Grid<CrosswordSquare> {
             newGrid.setCell(row, column, new CrosswordSquare());
         }
     }
+    
+    
  
     public char getSolution(int row, int column) {
         if (!correctCoords(row, column) || isBlackSquare(row, column)) {
@@ -198,4 +207,6 @@ public class Crossword extends Grid<CrosswordSquare> {
             newGrid.getCell(row, column).setVertical(def);
         }
     }
+    
+    
 }

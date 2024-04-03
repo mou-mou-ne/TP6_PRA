@@ -207,6 +207,12 @@ public class Crossword extends Grid<CrosswordSquare> {
             newGrid.getCell(row, column).setVertical(def);
         }
     }
+
+	public void setHorizontalDirection(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
     
     
 }

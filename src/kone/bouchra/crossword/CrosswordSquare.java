@@ -65,4 +65,16 @@ public class CrosswordSquare {
     	this.statut=statut;
     }
 
+	public void setStyle(String string) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void requestFocus() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+
 }

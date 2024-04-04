@@ -28,7 +28,7 @@ public class Crossword extends Grid<CrosswordSquare> {
     private void initialiseGrid() {
         for (int row = 1; row <= getHeight(); row++) {
             for (int col = 1; col <= getWidth(); col++) {
-                CrosswordSquare square = new CrosswordSquare(' ', ' ', " ", " ", false);
+               CrosswordSquare square = CrosswordSquare.createDefault();;
                 setCell(row, col, square);
                 setBlackSquare(row, col, true);
             }
@@ -178,31 +178,18 @@ public class Crossword extends Grid<CrosswordSquare> {
         newGrid.getCell(row, col).setSolution(sol);
     }
  
-//    public char getProposition(int row, int column) {
-//        if (!correctCoords(row, column) || isBlackSquare(row, column)) {
-//            throw new IllegalArgumentException("Les coordonnées ne sont pas valides");
-//        }
-//        return getCell(row, column).getProposition();
-//    }
-    
     public char getProposition(int row, int column) {
-        if (!isBlackSquare(row, column)) {
-            Character cellValue = getCell(row, column).getProposition().getValue().charAt(0);
-            if (cellValue != null) {
-                return cellValue;
-            } else {
-                throw new IllegalArgumentException("Cell content is not a character");
-            }
-        } else {
-            throw new IllegalArgumentException("Row and column must be within the grid dimensions");
+        if (!correctCoords(row, column) || isBlackSquare(row, column)) {
+            throw new IllegalArgumentException("Les coordonnées ne sont pas valides");
         }
+        return newGrid.getCell(row, column).getProp();
     }
  
     public void setProposition(int row, int column, char prop) {
         if (!correctCoords(row, column) || isBlackSquare(row, column)) {
             throw new IllegalArgumentException("Les coordonnées ne sont pas valides");
         }
-        newGrid.getCell(row, column).setProposition(prop);
+        newGrid.getCell(row, column).setProp(prop);
     }
  
     public String getDefinition(int row, int column, boolean horiz) {

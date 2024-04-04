@@ -27,9 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.BiConsumer;
-
-
-
+import javafx.beans.property.StringProperty;
 
 public class CrosswordController implements Initializable  {
 	
@@ -164,7 +162,7 @@ public class CrosswordController implements Initializable  {
         }
 
         // Ajouter les indices verticaux
-        for (Clue element : crossword.getVerticalClues()) {
+        for (Clue element : crossword.getVerticalClues())) {
         	listeIndiceVertical.getItems().add(element.getClue() + " ("+ element.getRow() + "," + element.getColumn() + ")");
         }
     }
@@ -280,7 +278,7 @@ public class CrosswordController implements Initializable  {
                 });
                 int finalI = i;
                 int finalJ = j;
-                square.getProposition().addListener((observable, oldValue, newValue) -> {
+                square.getProp().addListener((observable, oldValue, newValue) -> {
                     if (newValue != null) {
                         if(crossword.isHorizontalDirection() && finalJ<= crossword.getWidth() && finalJ + 1 <= crossword.getWidth() && !crossword.isBlackSquare(finalI , finalJ+1)){
                             crossword.getCell(finalI, finalJ +1).requestFocus();
@@ -303,7 +301,7 @@ public class CrosswordController implements Initializable  {
         KeyCode eventKC = event.getCode();
         switch (eventKC) {
             case ENTER:
-                displayCorrectLetters(crossword);
+                afficherCorrectLettre(crossword);
                 System.out.println("Case correct");
                 break;
             case DOWN:
@@ -329,18 +327,12 @@ public class CrosswordController implements Initializable  {
         }
     }
 
-    private void displayCorrectLetters(Crossword crossword) {
+    private void afficherCorrectLettre(Crossword crossword){
         for (int i = 0; i < crossword.getHeight(); i++) {
             for (int j = 0; j < crossword.getWidth(); j++) {
-                CrosswordSquare square = crossword.getCell(i + 1, j + 1);
-                if (!crossword.isBlackSquare(i + 1, j + 1)) {
-                    Optional<String> proposition = square.getProposition();
-                    if (proposition.isPresent() && !proposition.get().isEmpty()) {
-                        char firstChar = proposition.get().charAt(0);
-                        if (square.getSolution() == firstChar) {
-                            square.setStyle("-fx-background-color: green; -fx-border-color: black; -fx-border-width: 0.5;");
-                        }
-                    }
+                CrosswordSquare square = crossword.getCell(i+1, j+1);
+                if(!crossword.isBlackSquare(i+1, j+1) && square.getSolution() == square.getProp().get().charAt(0)){
+                    square.setStyle("-fx-background-color: green; -fx-border-color: black; -fx-border-width: 0.5;");
                 }
             }
         }

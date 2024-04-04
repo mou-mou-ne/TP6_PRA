@@ -1,20 +1,21 @@
 package kone.bouchra.crossword;
 
-import javafx.beans.Observable;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+
 import javafx.scene.Cursor;
 
 
 public class CrosswordSquare extends Label {
     
     private Character solution; // Caractère de la solution pour ce carré
-    private StringProperty proposition; // Proposition de caractère pour ce carré
+    private StringProperty prop; // Proposition de caractère pour ce carré
     private String horizontal; // Orientation horizontale du mot
     private String vertical; // Orientation verticale du mot
     private boolean statut; // Statut du carré (peut-être utilisé pour indiquer si le carré est actif ou non)
@@ -22,12 +23,16 @@ public class CrosswordSquare extends Label {
     // Constructeur pour initialiser les propriétés du carré
     public CrosswordSquare(char solution, String proposition, String horizontal, String vertical, boolean statut) {
         this.solution = solution;
-        this.proposition = new SimpleStringProperty(proposition);
+        this.prop = new SimpleStringProperty(proposition);
         this.horizontal = horizontal;
         this.vertical = vertical;
         this.statut = statut;
         initializeProperties(); // Appel de la méthode pour définir les propriétés par défaut
         setupEventHandlers(); // Appel de la méthode pour gérer les événements
+    }
+    // Méthode de fabrique pour créer une instance par défaut de CrosswordSquare
+    public static CrosswordSquare createDefault() {
+        return new CrosswordSquare(' ', "", " ", " ", false);
     }
 
     // Getters et setters pour chaque propriété
@@ -39,12 +44,12 @@ public class CrosswordSquare extends Label {
         this.solution=solution;
     }
 
-    public StringProperty getProposition() {
-        return proposition;
+    public StringProperty getProp() {
+        return prop;
     }
 
-    public void setProposition(String proposition) {
-        this.proposition.set(proposition);
+    public void setProp(String prop) {
+        this.prop.set(prop);;
     }
     
     public String getHorizontal() {
@@ -118,7 +123,7 @@ public class CrosswordSquare extends Label {
                 String text = event.getText();
                 if (text.matches("[A-Za-z]")) { // Vérifie si la touche pressée est une lettre
                     setText(text.toUpperCase()); // Met le texte en majuscule
-                    this.setProposition(String.valueOf(text.toUpperCase().charAt(0))); // Met à jour la proposition
+                    this.setProp(String.valueOf(text.toUpperCase().charAt(0))); // Met à jour la proposition
                 } else {
                     event.consume(); // Consomme l'événement si la touche n'est pas une lettre
                 }

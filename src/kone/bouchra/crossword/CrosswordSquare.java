@@ -1,17 +1,24 @@
 package kone.bouchra.crossword;
 
-public class CrosswordSquare {
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.control.Label;
+
+public class CrosswordSquare extends Label {
 	
 	private char solution;
-    private char proposition;
+//    private char proposition;
+
+    private StringProperty proposition;
     private String horizontal;
     private String vertical;
     private boolean statut;
     
     
-    public CrosswordSquare(char solution, char proposition, String horizontal, String vertical, boolean statut) {
+    public CrosswordSquare(char solution, String proposition, String horizontal, String vertical, boolean statut) {
         this.solution = solution;
-        this.proposition = proposition;
+//        this.proposition = proposition;
+        this.proposition = new SimpleStringProperty(proposition);
         this.horizontal = horizontal;
         this.vertical = vertical;
         this.statut = statut;
@@ -29,14 +36,24 @@ public class CrosswordSquare {
     }
 
     
-    public char getProposition() {
-
+//    public char getProposition() {
+//
+//        return proposition;
+//    }
+//
+//    public void setProposition(char proposition) {
+//
+//        this.proposition=proposition;
+//    }
+    
+    public StringProperty getProposition() {
         return proposition;
     }
 
-    public void setProposition(char proposition) {
 
-        this.proposition=proposition;
+
+    public void setProposition(String proposition) {
+        this.proposition.set(proposition);
     }
     
 

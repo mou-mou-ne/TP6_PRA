@@ -3,17 +3,23 @@ package kone.bouchra.crossword;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.util.Callback;
+import javafx.util.Duration;
+import javafx.scene.layout.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
+import javafx.animation.ScaleTransition;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,23 +30,41 @@ import java.util.function.BiConsumer;
 
 
 
+
 public class CrosswordController implements Initializable  {
+	
     @FXML
     private GridPane crosswordGrid;
     @FXML
-    private ListView<String> horizontalClues;
+    private ListView<String> listeIndiceHorizontal;
     @FXML
-    private ListView<String> verticalClues;
+    private ListView<String> listeIndiceVertical;
+    private int row;
+    private int column;
     @FXML
     private AnchorPane anchorPane;
+    
+
+    
+
+    @FXML
+    private void selectHorizontal() {
+        isHorizontal = true;
+    }
+
+    @FXML
+    private void selectVertical() {
+        isHorizontal = false;
+    }
+    
 
     private Label currentCell;
     private boolean isHorizontal;
-    private Map<String, List<Integer>> horizontalCluesMap = new HashMap<>();
-    private Map<String, List<Integer>> verticalCluesMap = new HashMap<>();
+   private Map<String, List<Integer>> horizontalCluesMap = new HashMap<>();
+   private Map<String, List<Integer>> verticalCluesMap = new HashMap<>();
 
-    
-    
+
+   
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -50,13 +74,20 @@ public class CrosswordController implements Initializable  {
 
            this.configGrille(crossword);
 //
-//            // Configure listView
-//            configureListView(crossword);
-//
+//            // Configuration de la liste View
+           this.configListView(crossword);
+           
+           advanceCursor(crossword, null, column, column);
+           afficherLettre(crossword);
+           indiceD(null, crossword);
+           selectionnerIndice(crossword);
 //            crossword.getCell(1, 1).requestFocus();
 //
 //            // Current direction configuration
 //            configureCurrentDirection(crossword);
+           majCouleurIndice(listeIndiceHorizontal);
+           majCouleurIndice(listeIndiceVertical);
+           configCDirection(crossword);
 
         } catch (Exception e){
             e.printStackTrace();
@@ -129,12 +160,12 @@ public class CrosswordController implements Initializable  {
     private void configListView(Crossword crossword){
         // Ajouter les indices horizontaux
         for (Clue element : crossword.getHorizontalClues()) {
-        	horizontalClues.getItems().add(element.getClue() + " ("+ element.getRow() + "," + element.getColumn() + ")");
+        	listeIndiceHorizontal.getItems().add(element.getClue() + " ("+ element.getRow() + "," + element.getColumn() + ")");
         }
 
         // Ajouter les indices verticaux
         for (Clue element : crossword.getVerticalClues()) {
-        	verticalClues.getItems().add(element.getClue() + " ("+ element.getRow() + "," + element.getColumn() + ")");
+        	listeIndiceVertical.getItems().add(element.getClue() + " ("+ element.getRow() + "," + element.getColumn() + ")");
         }
     }
     
@@ -239,6 +270,29 @@ public class CrosswordController implements Initializable  {
         CrosswordSquare label = crossword.getCell(row, column);
         label.requestFocus();
     }
+    
+    private void configCDirection(Crossword crossword){
+        for (int i = 1; i <= crossword.getHeight(); i++) {
+            for (int j = 1; j <= crossword.getWidth(); j++) {
+                CrosswordSquare square = crossword.getCell(i, j);
+                square.setOnKeyReleased((e) -> {
+                    releaseKey(e, crossword);
+                });
+                int finalI = i;
+                int finalJ = j;
+                square.getProposition().addListener((observable, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        if(crossword.isHorizontalDirection() && finalJ<= crossword.getWidth() && finalJ + 1 <= crossword.getWidth() && !crossword.isBlackSquare(finalI , finalJ+1)){
+                            crossword.getCell(finalI, finalJ +1).requestFocus();
+                        } else if(!crossword.isHorizontalDirection() && finalI<= crossword.getHeight() && finalI +1 <= crossword.getHeight() && !crossword.isBlackSquare(finalI+1, finalJ)) {
+                            crossword.getCell(finalI + 1, finalJ).requestFocus();
+                        }
+                    }
+                });
+
+            }
+        }
+    }
 
     @FXML
     public void releaseKey(KeyEvent event, Crossword crossword) {
@@ -309,30 +363,99 @@ public class CrosswordController implements Initializable  {
 
         if (isHorizontal) {
             // Mettre à jour les indices horizontaux
-            horizontalClues.getSelectionModel().clearSelection();
+        	listeIndiceHorizontal.getSelectionModel().clearSelection();
             for (Map.Entry<String, List<Integer>> entry : horizontalCluesMap.entrySet()) {
                 if (entry.getValue().contains(col)) {
-                    horizontalClues.getSelectionModel().select(entry.getKey());
+                	listeIndiceHorizontal.getSelectionModel().select(entry.getKey());
                 }
             }
         } else {
             // Mettre à jour les indices verticaux
-            verticalClues.getSelectionModel().clearSelection();
+        	listeIndiceVertical.getSelectionModel().clearSelection();
             for (Map.Entry<String, List<Integer>> entry : verticalCluesMap.entrySet()) {
                 if (entry.getValue().contains(row)) {
-                    verticalClues.getSelectionModel().select(entry.getKey());
+                	listeIndiceVertical.getSelectionModel().select(entry.getKey());
                 }
             }
         }
     }
 
-    @FXML
-    private void selectHorizontal() {
-        isHorizontal = true;
+    
+//modifier la couleur d'arrière-plan des éléments sélectionnés
+    private void majCouleurIndice(ListView<String> list) {
+        // Utilise un Callback pour personnaliser l'apparence des cellules
+        list.setCellFactory(new Callback<>() {
+            @Override
+            public ListCell<String> call(ListView<String> param) {
+                return new ListCell<String>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        // Met à jour le texte de la cellule
+                        setText(item);
+
+                        // Gestionnaire d'événements pour changer la couleur d'arrière-plan lors du clic
+                        setOnMouseClicked(event -> {
+                            if (isSelected()) {
+                                // Change la couleur d'arrière-plan en rouge lorsqu'un élément est sélectionné
+                                setStyle("-fx-background-color: red;");
+                            } else {
+                                // Réinitialise la couleur d'arrière-plan
+                                setStyle("");
+                            }
+                        });
+                    }
+                };
+            }
+        });
+    }
+    
+    private void selectionnerIndice(Crossword crossword){
+        for (int i = 1; i <= crossword.getHeight(); i++) {
+            for (int j = 1; j <= crossword.getWidth(); j++) {
+                CrosswordSquare square = crossword.getCell(i, j);
+                int i1 = i;
+                int j2 = j;
+                square.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                    if(newValue) {
+                        String liste = listeIndiceHorizontal.getItems().get(i1-1);
+                        listeIndiceHorizontal.scrollTo(i1-1);
+                        listeIndiceHorizontal.getSelectionModel().select(i1-1);
+                        listeIndiceVertical.scrollTo(j2-1);
+                        listeIndiceVertical.getSelectionModel().select(j2-1);
+                        this.indiceD(liste, crossword);
+                    }
+                });
+            }
+        }
+    }
+    
+    private void indiceD(String clue, Crossword crossword){
+        for (Clue element : crossword.getHorizontalClues()) {
+            if(!clue.startsWith(clue) && element.getRow() == 1){
+                System.out.println("lig: " + 1 + " "+ element.getClue());
+            }
+        }
+    }
+    
+    private void afficherLettre(Crossword crossword){
+        for (int i = 0; i < crossword.getHeight(); i++) {
+            for (int j = 0; j < crossword.getWidth(); j++) {
+                CrosswordSquare crosswordSquare = crossword.getCell(i+1, j+1);
+                crosswordSquare.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        ScaleTransition st = new ScaleTransition(Duration.millis(500));
+                        st.setFromX(0);
+                        st.setToX(1);
+                        st.setFromY(0);
+                        st.setToY(1);
+                        st.setNode(crosswordSquare);
+                        st.play();
+                    }
+                });
+            }
+        }
     }
 
-    @FXML
-    private void selectVertical() {
-        isHorizontal = false;
-    }
 }

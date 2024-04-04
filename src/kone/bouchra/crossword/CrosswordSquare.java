@@ -1,5 +1,6 @@
 package kone.bouchra.crossword;
 
+import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
@@ -9,9 +10,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.Cursor;
 
+
 public class CrosswordSquare extends Label {
     
-    private char solution; // Caractère de la solution pour ce carré
+    private Character solution; // Caractère de la solution pour ce carré
     private StringProperty proposition; // Proposition de caractère pour ce carré
     private String horizontal; // Orientation horizontale du mot
     private String vertical; // Orientation verticale du mot
@@ -27,7 +29,7 @@ public class CrosswordSquare extends Label {
         initializeProperties(); // Appel de la méthode pour définir les propriétés par défaut
         setupEventHandlers(); // Appel de la méthode pour gérer les événements
     }
-    
+
     // Getters et setters pour chaque propriété
     public char getSolution(){
         return solution;
@@ -68,6 +70,19 @@ public class CrosswordSquare extends Label {
     public void setStatut(boolean statut) {
         this.statut=statut;
     }
+    
+//    public StringProperty textProperty() {
+//        return text;
+//    }
+//
+//    public String getText() {
+//        return text.get();
+//    }
+//
+//    public void setText(String text) {
+//        this.text.set(text);
+//    }
+//    
     
     // Méthode pour définir les propriétés par défaut du carré
     private void initializeProperties(){
@@ -115,4 +130,6 @@ public class CrosswordSquare extends Label {
     public void requestFocus() {
         // Implémentez la logique pour demander le focus ici
     }
+
+
 }

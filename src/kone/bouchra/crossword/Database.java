@@ -63,8 +63,7 @@ public class Database {
     }
 
     private void populateCrosswordGrid(Crossword crossword, ResultSet rs) throws SQLException {
-        // Placeholder implementation for populating the crossword grid
-        // This assumes you have a column for each square indicating if it's black
+        
         for (int i = 0; i < crossword.getHeight(); i++) {
             for (int j = 0; j < crossword.getWidth(); j++) {
                 boolean isBlack = rs.getBoolean("is_black_" + i + "_" + j);

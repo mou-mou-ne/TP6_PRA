@@ -11,9 +11,11 @@ import javafx.collections.ObservableList;
 
 public class Crossword extends Grid<CrosswordSquare> {
 	private Grid<CrosswordSquare> newGrid;
-
+	private boolean isHorizontalDirection;
     private ObservableList<Clue> verticalClues;
     private ObservableList<Clue> horizontalClues;
+
+
 
     Crossword(int height, int width) {
         super(height, width);
@@ -21,6 +23,7 @@ public class Crossword extends Grid<CrosswordSquare> {
         verticalClues = FXCollections.observableArrayList();
         horizontalClues = FXCollections.observableArrayList();
     }
+    
 
     private void initialiseGrid() {
         for (int row = 1; row <= getHeight(); row++) {
@@ -175,11 +178,24 @@ public class Crossword extends Grid<CrosswordSquare> {
         newGrid.getCell(row, col).setSolution(sol);
     }
  
+//    public char getProposition(int row, int column) {
+//        if (!correctCoords(row, column) || isBlackSquare(row, column)) {
+//            throw new IllegalArgumentException("Les coordonnées ne sont pas valides");
+//        }
+//        return getCell(row, column).getProposition();
+//    }
+    
     public char getProposition(int row, int column) {
-        if (!correctCoords(row, column) || isBlackSquare(row, column)) {
-            throw new IllegalArgumentException("Les coordonnées ne sont pas valides");
+        if (!isBlackSquare(row, column)) {
+            Character cellValue = getCell(row, column).getProposition().getValue().charAt(0);
+            if (cellValue != null) {
+                return cellValue;
+            } else {
+                throw new IllegalArgumentException("Cell content is not a character");
+            }
+        } else {
+            throw new IllegalArgumentException("Row and column must be within the grid dimensions");
         }
-        return newGrid.getCell(row, column).getProposition();
     }
  
     public void setProposition(int row, int column, char prop) {
@@ -208,10 +224,13 @@ public class Crossword extends Grid<CrosswordSquare> {
         }
     }
 
-	public void setHorizontalDirection(boolean b) {
-		// TODO Auto-generated method stub
-		
-	}
+    public boolean isHorizontalDirection() {
+        return this.isHorizontalDirection();
+    }
+
+    public void setHorizontalDirection(boolean isHorizontalDirection) {
+        this.isHorizontalDirection = isHorizontalDirection;
+    }
 
     
     

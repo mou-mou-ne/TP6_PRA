@@ -1,6 +1,7 @@
 package kone.bouchra.crossword;
 
 
+import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -36,11 +37,11 @@ public class CrosswordSquare extends Label {
     }
 
     // Getters et setters pour chaque propriété
-    public char getSolution(){
+    public Character getSolution(){
         return solution;
     }
 
-    public void setSolution(char solution){
+    public void setSolution(Character solution){
         this.solution=solution;
     }
 
@@ -49,7 +50,7 @@ public class CrosswordSquare extends Label {
     }
 
     public void setProp(String prop) {
-        this.prop.set(prop);;
+        this.prop.set(prop);
     }
     
     public String getHorizontal() {
@@ -135,6 +136,8 @@ public class CrosswordSquare extends Label {
     public void requestFocus() {
         // Implémentez la logique pour demander le focus ici
     }
+	
+	
 
 
 }

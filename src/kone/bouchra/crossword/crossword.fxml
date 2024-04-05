@@ -11,8 +11,9 @@
 
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kone.bouchra.crossword.CrosswordController">
    <children>
-      <ListView fx:id="horizontalClues" layoutX="386.0" layoutY="26.0" prefHeight="162.0" prefWidth="200.0" />
-      <ListView fx:id="verticalClues" layoutX="386.0" layoutY="212.0" prefHeight="174.0" prefWidth="200.0" />
+   
+      <ListView fx:id="listeIndiceHorizontal" layoutX="386.0" layoutY="26.0" prefHeight="162.0" prefWidth="200.0" />
+      <ListView fx:id="listeIndiceVertical" layoutX="386.0" layoutY="212.0" prefHeight="174.0" prefWidth="200.0" />
       <ScrollBar layoutX="570.0" layoutY="26.0" orientation="VERTICAL" prefHeight="162.0" prefWidth="16.0" />
       <ScrollBar layoutX="570.0" layoutY="212.0" orientation="VERTICAL" prefHeight="174.0" prefWidth="16.0" />
       <Label layoutX="386.0" layoutY="5.0" text="Indices horizontaux" />

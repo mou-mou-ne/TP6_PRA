@@ -10,7 +10,7 @@ public class Grid<T> {
 	
 	private int height;
 	private int width;
-	private T [][] array ;
+	private T[][] array ;
 	
 	
 	public Grid (int height, int width){

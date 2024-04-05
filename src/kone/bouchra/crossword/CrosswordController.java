@@ -5,129 +5,76 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
-import javafx.util.Callback;
-import javafx.util.Duration;
-import javafx.scene.layout.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
+import javafx.util.Callback;
+import javafx.util.Duration;
 import javafx.animation.ScaleTransition;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import java.util.*;
 import java.util.ResourceBundle;
 import java.util.function.BiConsumer;
 import javafx.beans.property.StringProperty;
 
-public class CrosswordController implements Initializable  {
-	
+public class CrosswordController implements Initializable {
+    
     @FXML
     private GridPane crosswordGrid;
     @FXML
     private ListView<String> listeIndiceHorizontal;
     @FXML
     private ListView<String> listeIndiceVertical;
-    private int row;
-    private int column;
+    private boolean isHorizontal;
+    private Label currentCell;
+    
+    
     @FXML
     private AnchorPane anchorPane;
     
-
-    
-
-    @FXML
-    private void selectHorizontal() {
-        isHorizontal = true;
-    }
-
-    @FXML
-    private void selectVertical() {
-        isHorizontal = false;
-    }
-    
-
-    private Label currentCell;
-    private boolean isHorizontal;
-   private Map<String, List<Integer>> horizontalCluesMap = new HashMap<>();
-   private Map<String, List<Integer>> verticalCluesMap = new HashMap<>();
-
-
-   
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             Database database = new Database();
-            Crossword  crossword = Crossword.createPuzzle(database, Main.choix + 1);
+            Crossword crossword = Crossword.createPuzzle(database, Main.choix + 1);
 
-           this.configGrille(crossword);
-//
-//            // Configuration de la liste View
-           this.configListView(crossword);
-           
-           advanceCursor(crossword, null, column, column);
-           afficherLettre(crossword);
-           indiceD(null, crossword);
-           selectionnerIndice(crossword);
-//            crossword.getCell(1, 1).requestFocus();
-//
-//            // Current direction configuration
-//            configureCurrentDirection(crossword);
-           majCouleurIndice(listeIndiceHorizontal);
-           majCouleurIndice(listeIndiceVertical);
-           configCDirection(crossword);
+            configGrille(crossword);
+            configListView(crossword);
+            advanceCursor(crossword, null, 1, 1);
+            afficherLettre(crossword);
+            indiceD(null, crossword);
+            selectionnerIndice(crossword);
+            majCouleurIndice(listeIndiceHorizontal);
+            majCouleurIndice(listeIndiceVertical);
+            configCDirection(crossword);
 
         } catch (Exception e){
             e.printStackTrace();
         }
     }
-//    public void initialize() {
-//        // Exemple de remplissage de la grille avec des Labels
-//        for (int row = 0; row < 5; row++) {
-//            for (int col = 0; col < 5; col++) {
-//                Label label = new Label(" ");
-//                label.setMinSize(50, 50);
-//                label.setMaxSize(50, 50);
-//                label.setPrefSize(50, 50);
-//                label.setOnMouseClicked(this::handleCellClick);
-//                crosswordGrid.add(label, col, row);
-//            }
-//        }
-//
-//        // Exemple d'initialisation des indices
-//        horizontalCluesMap.put("Indice 1", Arrays.asList(0, 1, 2));
-//        horizontalCluesMap.put("Indice 2", Arrays.asList(3, 4));
-//        verticalCluesMap.put("Indice 3", Arrays.asList(0, 1, 2));
-//        verticalCluesMap.put("Indice 4", Arrays.asList(3, 4));
-//
-//        // Remplissage des listes d'indices
-//        horizontalClues.setItems(FXCollections.observableArrayList(horizontalCluesMap.keySet()));
-//        verticalClues.setItems(FXCollections.observableArrayList(verticalCluesMap.keySet()));
-//    }
-    
-    
     
     private void configGrille(Crossword crossword){
-    	crosswordGrid = new GridPane();
-    	crosswordGrid.setPrefHeight(crossword.getHeight());
-    	crosswordGrid.setPrefWidth(crossword.getWidth());
+        crosswordGrid.setPrefHeight(crossword.getHeight());
+        crosswordGrid.setPrefWidth(crossword.getWidth());
 
         for (int i = 0; i < crossword.getHeight(); i++) {
-        	crosswordGrid.getRowConstraints().add(new RowConstraints(30));
+            crosswordGrid.getRowConstraints().add(new RowConstraints(30));
         }
 
         for (int j = 0; j < crossword.getWidth(); j++) {
-        	crosswordGrid.getColumnConstraints().add(new ColumnConstraints(30));
+            crosswordGrid.getColumnConstraints().add(new ColumnConstraints(30));
         }
 
         crosswordGrid.setGridLinesVisible(true);
@@ -143,7 +90,6 @@ public class CrosswordController implements Initializable  {
             }
         }
 
-        // Set the anchor constraints to center the content
         AnchorPane.setTopAnchor(crosswordGrid, 30.0);
         AnchorPane.setBottomAnchor(crosswordGrid, 50.0);
         AnchorPane.setLeftAnchor(crosswordGrid, 100.0);
@@ -152,26 +98,20 @@ public class CrosswordController implements Initializable  {
         anchorPane.getChildren().add(crosswordGrid);
     }
     
-    
-    
-
     private void configListView(Crossword crossword){
-        // Ajouter les indices horizontaux
         for (Clue element : crossword.getHorizontalClues()) {
-        	listeIndiceHorizontal.getItems().add(element.getClue() + " ("+ element.getRow() + "," + element.getColumn() + ")");
+            listeIndiceHorizontal.getItems().add(element.getClue() + " ("+ element.getRow() + "," + element.getColumn() + ")");
         }
 
-        // Ajouter les indices verticaux
-        for (Clue element : crossword.getVerticalClues())) {
-        	listeIndiceVertical.getItems().add(element.getClue() + " ("+ element.getRow() + "," + element.getColumn() + ")");
+        for (Clue element : crossword.getVerticalClues()) {
+            listeIndiceVertical.getItems().add(element.getClue() + " ("+ element.getRow() + "," + element.getColumn() + ")");
         }
     }
     
     private void advanceCursor(Crossword crossword, KeyCode keyCode, int row, int column) {
-        int width = crossword.getWidth();
         int height = crossword.getHeight();
+        int width = crossword.getWidth();
 
-        // Méthode pour gérer le mouvement horizontal
         BiConsumer<Integer, Integer> moveHorizontal = (newRow, newColumn) -> {
             if (newColumn == 1) {
                 if (newRow == 1) {
@@ -190,7 +130,6 @@ public class CrosswordController implements Initializable  {
             crossword.setHorizontalDirection(true);
         };
 
-        // Méthode pour gérer le mouvement vertical
         BiConsumer<Integer, Integer> moveVertical = (newRow, newColumn) -> {
             if (newRow == height) {
                 newRow = 1;
@@ -200,7 +139,6 @@ public class CrosswordController implements Initializable  {
             crossword.setHorizontalDirection(false);
         };
 
-        // Appliquer le mouvement en fonction du KeyCode
         switch (keyCode) {
             case LEFT:
                 moveHorizontal.accept(row - 1, column);
@@ -218,53 +156,47 @@ public class CrosswordController implements Initializable  {
                 return;
         }
 
-        // Ajuster pour les cases noires
         while (crossword.isBlackSquare(row, column)) {
-            // Logique similaire pour ajuster les cases noires
-        	 switch (keyCode) {
-             case LEFT:
-                 if (column == 1 && row == 1) {
-                	 column = width;
-                     row = height;
-                 } else if (column == 0) {
-                     row--;
-                     column = width - 1;
-                 } else {
-                	 column--;
-                 }
-                 break;
-
-             case RIGHT:
-                 if (column == width && row == height) {
-                	 column = 1;
-                     row = 1;
-                 } else if (column == width) {
-                     row++;
-                     column = 1;
-                 } else {
-                	 column++;
-                 }
-                 break;
-
-             case DOWN:
-                 if (row == height) {
-                     row = 1;
-                 } else {
-                     row++;
-                 }
-                 break;
-
-             case UP:
-                 if (row == 1) {
-                     row = height;
-                 } else {
-                     row--;
-                 }
-                 break;
-         }
+            switch (keyCode) {
+                case LEFT:
+                    if (column == 1 && row == 1) {
+                        column = width;
+                        row = height;
+                    } else if (column == 0) {
+                        row--;
+                        column = width - 1;
+                    } else {
+                        column--;
+                    }
+                    break;
+                case RIGHT:
+                    if (column == width && row == height) {
+                        column = 1;
+                        row = 1;
+                    } else if (column == width) {
+                        row++;
+                        column = 1;
+                    } else {
+                        column++;
+                    }
+                    break;
+                case DOWN:
+                    if (row == height) {
+                        row = 1;
+                    } else {
+                        row++;
+                    }
+                    break;
+                case UP:
+                    if (row == 1) {
+                        row = height;
+                    } else {
+                        row--;
+                    }
+                    break;
+            }
         }
 
-        // Mettre à jour le style et le focus du TextField
         CrosswordSquare label = crossword.getCell(row, column);
         label.requestFocus();
     }
@@ -338,44 +270,7 @@ public class CrosswordController implements Initializable  {
         }
     }
 
-   
-
-
-    private void handleCellClick(MouseEvent event) {
-        Label clickedCell = (Label) event.getSource();
-        if (currentCell != null) {
-            currentCell.setStyle("-fx-border-color: transparent;");
-        }
-        currentCell = clickedCell;
-        currentCell.setStyle("-fx-border-color: blue; -fx-border-width: 2;");
-
-        // Mise à jour des indices sélectionnés
-        int row = GridPane.getRowIndex(clickedCell);
-        int col = GridPane.getColumnIndex(clickedCell);
-
-        if (isHorizontal) {
-            // Mettre à jour les indices horizontaux
-        	listeIndiceHorizontal.getSelectionModel().clearSelection();
-            for (Map.Entry<String, List<Integer>> entry : horizontalCluesMap.entrySet()) {
-                if (entry.getValue().contains(col)) {
-                	listeIndiceHorizontal.getSelectionModel().select(entry.getKey());
-                }
-            }
-        } else {
-            // Mettre à jour les indices verticaux
-        	listeIndiceVertical.getSelectionModel().clearSelection();
-            for (Map.Entry<String, List<Integer>> entry : verticalCluesMap.entrySet()) {
-                if (entry.getValue().contains(row)) {
-                	listeIndiceVertical.getSelectionModel().select(entry.getKey());
-                }
-            }
-        }
-    }
-
-    
-//modifier la couleur d'arrière-plan des éléments sélectionnés
     private void majCouleurIndice(ListView<String> list) {
-        // Utilise un Callback pour personnaliser l'apparence des cellules
         list.setCellFactory(new Callback<>() {
             @Override
             public ListCell<String> call(ListView<String> param) {
@@ -383,16 +278,12 @@ public class CrosswordController implements Initializable  {
                     @Override
                     protected void updateItem(String item, boolean empty) {
                         super.updateItem(item, empty);
-                        // Met à jour le texte de la cellule
                         setText(item);
 
-                        // Gestionnaire d'événements pour changer la couleur d'arrière-plan lors du clic
                         setOnMouseClicked(event -> {
                             if (isSelected()) {
-                                // Change la couleur d'arrière-plan en rouge lorsqu'un élément est sélectionné
                                 setStyle("-fx-background-color: red;");
                             } else {
-                                // Réinitialise la couleur d'arrière-plan
                                 setStyle("");
                             }
                         });
@@ -405,10 +296,10 @@ public class CrosswordController implements Initializable  {
     private void selectionnerIndice(Crossword crossword){
         for (int i = 1; i <= crossword.getHeight(); i++) {
             for (int j = 1; j <= crossword.getWidth(); j++) {
-                CrosswordSquare square = crossword.getCell(i, j);
+                CrosswordSquare crosswordSquare = crossword.getCell(i, j);
                 int i1 = i;
                 int j2 = j;
-                square.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                crosswordSquare.focusedProperty().addListener((observable, oldValue, newValue) -> {
                     if(newValue) {
                         String liste = listeIndiceHorizontal.getItems().get(i1-1);
                         listeIndiceHorizontal.scrollTo(i1-1);
@@ -421,10 +312,10 @@ public class CrosswordController implements Initializable  {
             }
         }
     }
-    
+
     private void indiceD(String clue, Crossword crossword){
         for (Clue element : crossword.getHorizontalClues()) {
-            if(!clue.startsWith(clue) && element.getRow() == 1){
+            if(element.getClue().startsWith(clue) && element.getRow() == 1){
                 System.out.println("lig: " + 1 + " "+ element.getClue());
             }
         }
@@ -449,5 +340,4 @@ public class CrosswordController implements Initializable  {
             }
         }
     }
-
 }

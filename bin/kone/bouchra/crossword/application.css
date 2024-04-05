@@ -1,6 +1,9 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
 /* styles.css */
+.crossword-square:focused {
+    -fx-border-color: blue;
+}
 .current-cell {
     -fx-border-color: blue;
     -fx-border-width: 2;
@@ -9,3 +12,11 @@
 .selected-clue {
     -fx-text-fill: red;
 }
+
+.crossword-square {
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
+
